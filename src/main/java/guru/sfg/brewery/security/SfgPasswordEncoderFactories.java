@@ -9,17 +9,20 @@ import java.util.Map;
 
 public class SfgPasswordEncoderFactories {
 
+
     public static PasswordEncoder createDelegatingPasswordEncoder() {
-        String encodingId = "bcrypt";
-        Map<String, PasswordEncoder> encoders = new HashMap();
-        encoders.put(encodingId, new BCryptPasswordEncoder());
-        encoders.put("bcrypt15", new BCryptPasswordEncoder(15));
-        encoders.put("ldap", new LdapShaPasswordEncoder());
-        encoders.put("noop", NoOpPasswordEncoder.getInstance());
-        encoders.put("sha256", new StandardPasswordEncoder());
+        String encodingId = "bcrypt15";
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put(encodingId, new BCryptPasswordEncoder(10));
+        encoders.put("bcrypt", new BCryptPasswordEncoder());
+        encoders.put("ldap", new org.springframework.security.crypto.password.LdapShaPasswordEncoder());
+        encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
+        encoders.put("sha256", new org.springframework.security.crypto.password.StandardPasswordEncoder());
+
         return new DelegatingPasswordEncoder(encodingId, encoders);
     }
 
+    //don't instantiate class
     private SfgPasswordEncoderFactories() {
     }
 }
