@@ -8,13 +8,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -24,19 +28,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     authorize
                             .antMatchers("/h2-console/**").permitAll() //do not use in production!
                             .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
-//                            .mvcMatchers("/brewery/breweries")
-//                                .hasAnyRole("ADMIN", "CUSTOMER")
-//                            .mvcMatchers(HttpMethod.GET, "/brewery/api/v1/breweries")
-//                                .hasAnyRole("ADMIN", "CUSTOMER")
-//                            .mvcMatchers("/beers/find", "/beers/{beerId}")
-//                                .hasAnyRole("ADMIN", "CUSTOMER", "USER");
                 } )
 
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().and()
-                .httpBasic();
+                .httpBasic()
+                .and().csrf().disable();
 
         //h2 console config
         http.headers().frameOptions().sameOrigin();
